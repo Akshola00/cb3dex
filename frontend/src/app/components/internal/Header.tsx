@@ -40,37 +40,39 @@ const Header = () => {
       id="nav"
       className="fixed z-[9999] w-full px-2 pt-4 transition-all duration-500 md:px-8 md:pt-8"
     >
-      <header className="rounded-[12px] md:rounded-[32px">
+      <header className="md:rounded-[32px rounded-[12px]">
         <div className="">
-        <div className="mx-auto flex h-16 max-w-[--header-max-w] items-center justify-between px-4 md:h-28 md:px-8">
-        
-            <div className="text-white text-xl">
-              cb3dex
+          <div className="mx-auto flex h-16 max-w-[--header-max-w] items-center justify-between px-4 md:h-28 md:px-8">
+            <div className="text-xl text-white">cb3dex</div>
+
+            <div className="relative hidden md:block">
+              <CiSearch className="absolute left-1 top-2 text-[1.7rem] text-white" />
+              <input
+                type="text"
+                className="rounded-lg border bg-inherit py-2 pl-8 text-[1.4rem] text-white outline-none"
+                placeholder="search for tokens"
+              />
             </div>
-    
-         <div className="relative md:block hidden">
-            <CiSearch className="absolute text-white top-2 left-1 text-[1.7rem]"/>
-            <input type="text"  className=" text-white text-[1.4rem] outline-none border pl-8 py-2 rounded-lg bg-inherit" placeholder="search for tokens" />
+            <div className="relative">
+              {address ? (
+                <div className="flex items-center gap-4">
+                  <AddressBar />
+                  <MenuButton />
+                </div>
+              ) : (
+                <ConnectButton className="rounded-xl border border-[#EC796B33]/100 bg-[#EC796B33]/10 px-6 py-2 text-[#EC796B33]/100" />
+              )}
+            </div>
           </div>
-         <div className="relative">
-            {address ? (
-              <div className="flex items-center gap-4">
-                <AddressBar />
-                <MenuButton />
-              </div>
-            ) : (
-              <ConnectButton className="border bg-[#EC796B33]/10 border-[#EC796B33]/100 text-[#EC796B33]/100 px-6 py-2 rounded-xl" />
-            )}
-          </div>
-            
-     
-        </div>
-        <div className="relative md:hidden w-full">
-            <CiSearch className="absolute text-white top-2 left-1 text-[1.7rem]"/>
-            <input type="text"  className=" w-4/5 mx-auto text-white text-[1.4rem] outline-none border pl-8 py-2 rounded-lg bg-inherit" placeholder="search for tokens" />
+          <div className="relative w-full md:hidden">
+            <CiSearch className="absolute left-1 top-2 text-[1.7rem] text-white" />
+            <input
+              type="text"
+              className="mx-auto w-4/5 rounded-lg border bg-inherit py-2 pl-8 text-[1.4rem] text-white outline-none"
+              placeholder="search for tokens"
+            />
           </div>
         </div>
-        
       </header>
     </div>
   );
