@@ -5,8 +5,7 @@ import Footer from "./components/internal/Footer";
 
 export const metadata: Metadata = {
   title: "cb3dex",
-  description:
-    "Fast and reliable token exchange",
+  description: "Fast and reliable token exchange!",
 };
 
 export default function RootLayout({
