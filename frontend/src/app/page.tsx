@@ -1,5 +1,4 @@
 import Header from "./components/internal/Header";
-import Exchange from "./components/internal/Exchange";
 import { FaRotate } from "react-icons/fa6";
 import AddTokenButton, { AddTokenModal } from "./components/lib/AddToken";
 export default function Home() {
@@ -30,7 +29,7 @@ export default function Home() {
           <h2>$0</h2>
         </div>
         <div className="flex justify-between">
-        <input type="number" defaultValue="0" id="sell"  className=" md:w-fit text-4xl w-20 sm:w-36 bg-inherit" />
+        <input type="number" defaultValue="0" id="sell"  className=" md:w-fit text-4xl w-20 sm:w-36 bg-inherit px-2 py-1" />
           <AddTokenButton className="border rounded-3xl px-6 flex items-center gap-3"  text={"select a token"}/>
         </div>
       </div>
@@ -39,7 +38,7 @@ export default function Home() {
           <h2>buy</h2>
         </div>
         <div className="flex justify-between ">
-        <input type="number" defaultValue="0" id="buy"  className=" md:w-fit text-4xl w-20 sm:w-36 bg-inherit" />
+        <input type="number" defaultValue="0" id="buy"  className=" md:w-fit text-4xl w-20 sm:w-36 bg-inherit p-2 py-1" />
           <AddTokenButton className="border rounded-3xl px-6 flex items-center gap-3"  text={"select a token"}/>
         </div>
       </div>
