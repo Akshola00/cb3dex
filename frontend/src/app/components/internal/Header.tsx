@@ -2,11 +2,10 @@
 import { useEffect, useRef } from "react";
 import { useAccount } from "@starknet-react/core";
 import AddressBar from "../lib/AddressBar";
-import ThemeSwitch from "./util/ThemeSwitch";
 import ConnectButton from "../lib/Connect";
 import useTheme from "@/app/components/internal/hooks/useTheme";
-import Link from "next/link";
 import MenuButton from "./MenuButton";
+import { CiSearch } from "react-icons/ci";
 
 const Header = () => {
   const { address } = useAccount();
@@ -41,37 +40,37 @@ const Header = () => {
       id="nav"
       className="fixed z-[9999] w-full px-2 pt-4 transition-all duration-500 md:px-8 md:pt-8"
     >
-      <header className="rounded-[12px] bg-primary-gradient md:rounded-[32px]">
+      <header className="rounded-[12px] md:rounded-[32px">
+        <div className="">
         <div className="mx-auto flex h-16 max-w-[--header-max-w] items-center justify-between px-4 md:h-28 md:px-8">
-          <div className="hidden w-[18.75rem] md:block">
-            <Link href={"/"}>
-              <img
-                src="/assets/logo.png"
-                alt="logo"
-                className="h-full w-full"
-              />
-            </Link>
+        
+            <div className="text-white text-xl">
+              cb3dex
+            </div>
+    
+         <div className="relative md:block hidden">
+            <CiSearch className="absolute text-white top-2 left-1 text-[1.7rem]"/>
+            <input type="text"  className=" text-white text-[1.4rem] outline-none border pl-8 py-2 rounded-lg bg-inherit" placeholder="search for tokens" />
           </div>
-
-          <Link href={"/"} className="block h-[35px] w-[35px] md:hidden">
-            <img src="/assets/mobile-logo.png" alt="" />
-          </Link>
-          <div className="relative">
+         <div className="relative">
             {address ? (
               <div className="flex items-center gap-4">
                 <AddressBar />
                 <MenuButton />
               </div>
             ) : (
-              <ConnectButton />
+              <ConnectButton className="border bg-[#EC796B33]/10 border-[#EC796B33]/100 text-[#EC796B33]/100 px-6 py-2 rounded-xl" />
             )}
-            <ThemeSwitch
-              className="absolute bottom-[-200%] left-3/4 md:grid lg:bottom-[-250%] lg:left-1/2"
-              action={changeTheme}
-              theme={theme}
-            />
+          </div>
+            
+     
+        </div>
+        <div className="relative md:hidden w-full">
+            <CiSearch className="absolute text-white top-2 left-1 text-[1.7rem]"/>
+            <input type="text"  className=" w-4/5 mx-auto text-white text-[1.4rem] outline-none border pl-8 py-2 rounded-lg bg-inherit" placeholder="search for tokens" />
           </div>
         </div>
+        
       </header>
     </div>
   );

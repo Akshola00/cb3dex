@@ -3,7 +3,11 @@ import { useState } from "react";
 import { useConnect } from "@starknet-react/core";
 import Close from "public/svg/Close";
 import GenericModal from "../internal/util/GenericModal";
-const AddTokenModal = () => {
+import Image from "next/image";
+import img from "../../twitter-image.png"
+import { CiSearch } from "react-icons/ci";
+import { FaChevronDown } from "react-icons/fa6";
+export const AddTokenModal = () => {
   const { connector } = useConnect();
   const [tokenAddress, setTokenAddress] = useState("");
   const [symbol, setSymbol] = useState("");
@@ -59,57 +63,39 @@ const AddTokenModal = () => {
           </div>
 
           <form action="" className="flex flex-col items-start gap-4">
-            <label>Contract Address</label>
-            <input
-              type="text"
-              placeholder="Enter Token Contract Address"
-              className="w-full rounded-[8px] border-[2px] border-solid border-[--borders] bg-[--link-card] p-3"
-              value={tokenAddress}
-              onChange={(e) => setTokenAddress(e.target.value)}
-            />
-
-            <label>Name</label>
-            <input
-              type="text"
-              placeholder="Enter Name"
-              className="w-full rounded-[8px] border-[2px] border-solid border-[--borders] bg-[--link-card] p-3"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-
-            <label>Symbol</label>
-            <input
-              type="text"
-              placeholder="Enter Symbol"
-              className="w-full rounded-[8px] border-[2px] border-solid border-[--borders] bg-[--link-card] p-3"
-              value={symbol}
-              onChange={(e) => setSymbol(e.target.value)}
-            />
-
-            <label>Decimals</label>
-            <input
-              type="text"
-              placeholder="0"
-              className="mb-4 w-full rounded-[8px] border-[2px] border-solid border-[--borders] bg-[--link-card] p-3"
-              value={decimals}
-              inputMode="decimal"
-              onChange={(e) => {
-                const value = e.target.value;
-                if (/^\d*\.?\d*$/.test(value)) {
-                  setDecimals(value);
-                }
-              }}
-            />
-
-            <button
-              className="w-full rounded-[12px] bg-[--headings] p-3 text-[--background] disabled:cursor-not-allowed md:p-4"
-              onClick={async (e) => {
-                e.preventDefault();
-                handleAddToken();
-              }}
-            >
-              Add Token
-            </button>
+           
+            <div className="relative w-full">
+            <CiSearch className="absolute text-white top-3 left-1 text-[1.7rem]"/>
+            <input type="text"  className="w-full border rounded-xl outline-none border-gray-600 bg-inherit text-white px-8 py-4" placeholder="search for tokens" />
+          </div>
+            <div className="flex justify-start hover:border-white cursor-pointer gap-5 w-full items-center">
+              <Image src={img} alt="token" className="rounded-full w-10 h-10 border-2"/>
+              <div className="text-left">
+                <h4 className="text-lg capitalize">starkNet</h4>
+                <span className="text-gray-600 uppercase text-base">strk</span>
+              </div>
+            </div>
+            <div className="flex justify-start hover:border-white cursor-pointer gap-5 w-full items-center">
+              <Image src={img} alt="token" className="rounded-full w-10 h-10 border-2"/>
+              <div className="text-left">
+                <h4 className="text-lg capitalize">starkNet</h4>
+                <span className="text-gray-600 uppercase text-base">strk</span>
+              </div>
+            </div>
+            <div className="flex justify-start hover:border-white cursor-pointer gap-5 w-full items-center">
+              <Image src={img} alt="token" className="rounded-full w-10 h-10 border-2"/>
+              <div className="text-left">
+                <h4 className="text-lg capitalize">starkNet</h4>
+                <span className="text-gray-600 uppercase text-base">strk</span>
+              </div>
+            </div>
+            <div className="flex justify-start hover:border-white cursor-pointer gap-5 w-full items-center">
+              <Image src={img} alt="token" className="rounded-full w-10 h-10 border-2"/>
+              <div className="text-left">
+                <h4 className="text-lg capitalize">starkNet</h4>
+                <span className="text-gray-600 uppercase text-base">strk</span>
+              </div>
+            </div>
           </form>
         </div>
       </div>
@@ -132,7 +118,7 @@ const AddTokenButton = ({
         popovertarget="add-token-popover"
         className={className}
       >
-        {text}
+        {text} <FaChevronDown/>
       </button>
       <AddTokenModal />
     </>
