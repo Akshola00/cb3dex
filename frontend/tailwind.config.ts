@@ -51,7 +51,6 @@ const config: Config = {
         "burner-wallet-bg-dark": "url('/assets/burnerWalletBgDark.svg')",
         "primary-gradient":
           "linear-gradient(180deg, #FF8D4E -9.12%, #FF6734 39.7%)",
-        "main-bg":"url('/assets/bur@2x.png')",
       },
       fontFamily: {
         coolvetica: ["coolvetica", "sans-serif"],
