@@ -79,14 +79,21 @@ pub mod swap {
             second_token: ContractAddress,
             amount: u256
         ) -> bool {
-            let second_token_instance = IERC20Dispatcher { contract_address: second_token };
+           // let second_token_instance = IERC20Dispatcher { contract_address: second_token };
 
             let mtnToken = self.mtnToken.read();
             let artToken = self.artToken.read();
 
             self.poolBalance.entry(mtnToken).write(2000);
             self.poolBalance.entry(artToken).write(2000);
+            
+            let mtntokenpoolbal = self.poolBalance.entry(mtnToken).read();
+            let arttokenpoolbal = self.poolBalance.entry(artToken).read();
+
+
             assert(amount < TOKEN_TOTAL_RESERVE_LIMIT, 'Pls try a lesser value');
+          
+            let result_token = ( mtntokenpoolbal * arttokenpoolbal ) / (mtntokenpoolbal + amount) - arttokenpoolbal;
 
             true
         }
