@@ -79,21 +79,34 @@ pub mod swap {
             second_token: ContractAddress,
             amount: u256
         ) -> bool {
-           // let second_token_instance = IERC20Dispatcher { contract_address: second_token };
+            let caller = get_caller_address();
+
+            let second_token_instance = IERC20Dispatcher { contract_address: second_token };
+            let first_token_instance = IERC20Dispatcher { contract_address: first_token };
+
+            //Validation
+            assert(!self.is_zero_address(first_token), Errors::ZERO_ADDRESS);
+            assert(!self.is_zero_address(second_token), Errors::ZERO_ADDRESS);
+            assert(first_token != second_token, Errors::SAME_TOKEN);
+            assert(amount > 0, Errors::ZERO_AMOUNT);
+            assert(amount < TOKEN_TOTAL_RESERVE_LIMIT, Errors::EXCEEDS_RESERVE_LIMIT);
 
             let mtnToken = self.mtnToken.read();
             let artToken = self.artToken.read();
+            assert(
+                (first_token == mtnToken && second_token == artToken)
+                    || (first_token == artToken && second_token == mtnToken),
+                Errors::INVALID_TOKEN
+            );
 
             self.poolBalance.entry(mtnToken).write(2000);
             self.poolBalance.entry(artToken).write(2000);
-            
+
             let mtntokenpoolbal = self.poolBalance.entry(mtnToken).read();
             let arttokenpoolbal = self.poolBalance.entry(artToken).read();
 
-
-            assert(amount < TOKEN_TOTAL_RESERVE_LIMIT, 'Pls try a lesser value');
-          
-            let result_token = ( mtntokenpoolbal * arttokenpoolbal ) / (mtntokenpoolbal + amount) - arttokenpoolbal;
+            let result_token = (mtntokenpoolbal * arttokenpoolbal) / (mtntokenpoolbal + amount)
+                - arttokenpoolbal;
 
             true
         }
