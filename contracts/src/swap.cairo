@@ -108,9 +108,8 @@ pub mod swap {
 
             let result_token = (mtntokenpoolbal * arttokenpoolbal) / (mtntokenpoolbal + amount) - arttokenpoolbal;
 
-            first_token_instance.transfer_from(caller, my_contract_address, amount.into() );
-            second_token_instance.transfer(caller, result_token.into());
-
+            first_token_instance.transfer_from(caller, my_contract_address, amount.try_into().unwrap() );
+            second_token_instance.transfer(caller, result_token.try_into().unwrap() );
 
             true
         }
