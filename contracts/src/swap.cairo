@@ -23,7 +23,7 @@ pub mod swap {
     use starknet::storage::{
         StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map
     };
-    use starknet::get_caller_address;
+    use starknet::{get_caller_address, get_contract_address};
 
     #[storage]
     struct Storage {
@@ -80,6 +80,7 @@ pub mod swap {
             amount: u256
         ) -> bool {
             let caller = get_caller_address();
+            let my_contract_address = get_contract_address();
 
             let second_token_instance = IERC20Dispatcher { contract_address: second_token };
             let first_token_instance = IERC20Dispatcher { contract_address: first_token };
@@ -105,8 +106,10 @@ pub mod swap {
             let mtntokenpoolbal = self.poolBalance.entry(mtnToken).read();
             let arttokenpoolbal = self.poolBalance.entry(artToken).read();
 
-            let result_token = (mtntokenpoolbal * arttokenpoolbal) / (mtntokenpoolbal + amount)
-                - arttokenpoolbal;
+            let result_token = (mtntokenpoolbal * arttokenpoolbal) / (mtntokenpoolbal + amount) - arttokenpoolbal;
+
+            first_token_instance.transfer_from(caller, my_contract_address, amount.try_into().unwrap() );
+            second_token_instance.transfer(caller, result_token.try_into().unwrap() );
 
             true
         }
