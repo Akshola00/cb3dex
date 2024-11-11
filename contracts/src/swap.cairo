@@ -58,6 +58,18 @@ pub mod swap {
         new_balance: u256,
     }
 
+    #[constructor]
+    fn constructor(
+        ref self: ContractState, owner: ContractAddress
+    ) {
+        let mtnToken = self.mtnToken.read();
+        let artToken = self.artToken.read();
+
+        self.poolBalance.entry(mtnToken).write(2000);
+        self.poolBalance.entry(artToken).write(2000);
+    }
+
+
     const TOKEN_TOTAL_RESERVE_LIMIT: u256 = 2000;
 
     mod Errors {
@@ -99,9 +111,6 @@ pub mod swap {
                     || (first_token == artToken && second_token == mtnToken),
                 Errors::INVALID_TOKEN
             );
-
-            self.poolBalance.entry(mtnToken).write(2000);
-            self.poolBalance.entry(artToken).write(2000);
 
             let mtntokenpoolbal = self.poolBalance.entry(mtnToken).read();
             let arttokenpoolbal = self.poolBalance.entry(artToken).read();
