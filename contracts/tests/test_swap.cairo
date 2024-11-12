@@ -1,4 +1,4 @@
-use snforge_std::{declare, ContractClassTrait, DeclareResultTrait};
+use snforge_std::{declare, ContractClassTrait, DeclareResultTrait, start_cheat_caller_address, stop_cheat_caller_address };
 use contracts::erc20::{
     erc20, IERC20Dispatcher, IERC20SafeDispatcher, IERC20DispatcherTrait, IERC20SafeDispatcherTrait
 };
@@ -45,7 +45,6 @@ fn all_contracts_deployed_successfully_and_thier_defaults() {
     'ART'.serialize(ref art_calldata);
     let deployed_art_contract_address: ContractAddress = deploy_util("erc20", art_calldata);
 
-
     // deploying mtntoken
     let mut mtn_calldata: Array<felt252> = array![];
     owner.serialize(ref mtn_calldata);
@@ -71,14 +70,23 @@ fn all_contracts_deployed_successfully_and_thier_defaults() {
     // getting an instance of the arttoken contract
     let artToken_instance = IERC20Dispatcher {contract_address: deployed_art_contract_address };
 
+    // getting an instance of the arttoken contract
+    let artToken_instance = IERC20Dispatcher {contract_address: deployed_art_contract_address };
+
+
+    start_cheat_caller_address(deployed_art_contract_address, owner.try_into().unwrap());
+    artToken_instance.transfer(deployed_swap_contract_address, 2000);
+    stop_cheat_caller_address(deployed_art_contract_address);
+
+    start_cheat_caller_address(deployed_mtn_contract_address, owner.try_into().unwrap());
+    mtnToken_instance.transfer(deployed_swap_contract_address, 2000);
+    stop_cheat_caller_address(deployed_mtn_contract_address);
 
     // using the instance of the swap contract
     let get_mtnTokenBalance = swapContract_instance.get_mtnTokenBalance(deployed_mtn_contract_address);
     let get_artTokenBalance = swapContract_instance.get_artTokenBalance(deployed_art_contract_address);
 
-
-    println!("the yeye token balance is: {}", get_mtnTokenBalance);
-    assert!(get_mtnTokenBalance == 2000, "omor its not equal o");
-    assert!(get_artTokenBalance == 2000, "omor its not equal o");
+    assert!(get_mtnTokenBalance == 2000, "not equal o");
+    assert!(get_artTokenBalance == 2000, "not equal o");
 
 }
