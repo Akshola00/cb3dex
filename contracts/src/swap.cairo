@@ -21,8 +21,10 @@ pub mod swap {
     };
     use starknet::ContractAddress;
     use starknet::storage::{
-        StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map
+        StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map, StorageMapReadAccess, StorageMapWriteAccess
     };
+    
+
     use starknet::{get_caller_address, get_contract_address};
 
     #[storage]
@@ -59,16 +61,10 @@ pub mod swap {
     }
 
     #[constructor]
-    fn constructor(
-        ref self: ContractState, owner: ContractAddress
-    ) {
-        let mtnToken = self.mtnToken.read();
-        let artToken = self.artToken.read();
-
+    fn constructor(ref self: ContractState, mtnToken: ContractAddress, artToken: ContractAddress) {
         self.poolBalance.entry(mtnToken).write(2000);
         self.poolBalance.entry(artToken).write(2000);
     }
-
 
     const TOKEN_TOTAL_RESERVE_LIMIT: u256 = 2000;
 
@@ -115,10 +111,12 @@ pub mod swap {
             let mtntokenpoolbal = self.poolBalance.entry(mtnToken).read();
             let arttokenpoolbal = self.poolBalance.entry(artToken).read();
 
-            let result_token = (mtntokenpoolbal * arttokenpoolbal) / (mtntokenpoolbal + amount) - arttokenpoolbal;
+            let result_token = (mtntokenpoolbal * arttokenpoolbal) / (mtntokenpoolbal + amount)
+                - arttokenpoolbal;
 
-            first_token_instance.transfer_from(caller, my_contract_address, amount.try_into().unwrap() );
-            second_token_instance.transfer(caller, result_token.try_into().unwrap() );
+            first_token_instance
+                .transfer_from(caller, my_contract_address, amount.try_into().unwrap());
+            second_token_instance.transfer(caller, result_token.try_into().unwrap());
 
             true
         }
