@@ -61,9 +61,10 @@ pub mod swap {
     }
 
     #[constructor]
-    fn constructor(ref self: ContractState, mtnToken: ContractAddress, artToken: ContractAddress) {
+    fn constructor(ref self: ContractState, mtnToken: ContractAddress, artToken: ContractAddress, owner: ContractAddress) {
         self.poolBalance.entry(mtnToken).write(2000);
         self.poolBalance.entry(artToken).write(2000);
+        self.owner.write(owner);
     }
 
     const TOKEN_TOTAL_RESERVE_LIMIT: u256 = 2000;
@@ -100,20 +101,10 @@ pub mod swap {
             assert(amount > 0, Errors::ZERO_AMOUNT);
             assert(amount < TOKEN_TOTAL_RESERVE_LIMIT, Errors::EXCEEDS_RESERVE_LIMIT);
 
-            let mtnToken = self.mtnToken.read();
-            let artToken = self.artToken.read();
-            assert(
-                (first_token == mtnToken && second_token == artToken)
-                    || (first_token == artToken && second_token == mtnToken),
-                Errors::INVALID_TOKEN
-            );
+            let firsttokenpoolbal = self.poolBalance.entry(first_token).read();
+            let secondtokenpoolbal = self.poolBalance.entry(second_token).read();
 
-            let mtntokenpoolbal = self.poolBalance.entry(mtnToken).read();
-            let arttokenpoolbal = self.poolBalance.entry(artToken).read();
-
-            let result_token = (mtntokenpoolbal * arttokenpoolbal) / (mtntokenpoolbal + amount)
-                - arttokenpoolbal;
-
+            let result_token = (secondtokenpoolbal * amount) / (firsttokenpoolbal + amount);
             first_token_instance
                 .transfer_from(caller, my_contract_address, amount.try_into().unwrap());
             second_token_instance.transfer(caller, result_token.try_into().unwrap());
