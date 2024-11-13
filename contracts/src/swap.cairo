@@ -72,6 +72,7 @@ pub mod swap {
     mod Errors {
         const INVALID_TOKEN: felt252 = 'Invalid token address';
         const INSUFFICIENT_BALANCE: felt252 = 'Insufficient balance';
+        const INSUFFICIENT_TOKEN: felt252 = 'Insufficient token';
         const EXCEEDS_RESERVE_LIMIT: felt252 = 'Exceeds reserve limit';
         const ZERO_ADDRESS: felt252 = 'Zero address not allowed';
         const ZERO_AMOUNT: felt252 = 'Amount cannot be zero';
@@ -101,10 +102,17 @@ pub mod swap {
             assert(amount > 0, Errors::ZERO_AMOUNT);
             assert(amount < TOKEN_TOTAL_RESERVE_LIMIT, Errors::EXCEEDS_RESERVE_LIMIT);
 
+
             let firsttokenpoolbal = self.poolBalance.entry(first_token).read();
             let secondtokenpoolbal = self.poolBalance.entry(second_token).read();
 
             let result_token = (secondtokenpoolbal * amount) / (firsttokenpoolbal + amount);
+
+            // Check DEX Contract Token Balance for Swap Execution
+            let contract_second_token_balance = second_token_instance.balance_of(my_contract_address);
+            assert(contract_second_token_balance.try_into().unwrap() > result_token, Errors::INSUFFICIENT_TOKEN);
+
+
             first_token_instance
                 .transfer_from(caller, my_contract_address, amount.try_into().unwrap());
             second_token_instance.transfer(caller, result_token.try_into().unwrap());
