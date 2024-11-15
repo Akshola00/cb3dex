@@ -1,8 +1,5 @@
-use contracts::erc20::{
-    erc20, IERC20Dispatcher, IERC20SafeDispatcher, IERC20DispatcherTrait, IERC20SafeDispatcherTrait
-};
 use starknet::ContractAddress;
-use core::zeroable::Zeroable;
+
 
 #[starknet::interface]
 trait ISwap<T> {
@@ -19,22 +16,14 @@ pub mod swap {
         erc20, IERC20Dispatcher, IERC20SafeDispatcher, IERC20DispatcherTrait,
         IERC20SafeDispatcherTrait
     };
-    use starknet::ContractAddress;
     use starknet::storage::{
         StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map,
         StorageMapReadAccess, StorageMapWriteAccess
     };
+    use starknet::{get_caller_address, get_contract_address, ContractAddress};
 
-
-    use starknet::{get_caller_address, get_contract_address};
-
-    #[storage]
-    struct Storage {
-        poolBalance: Map<ContractAddress, u256>,
-        mtnToken: ContractAddress,
-        artToken: ContractAddress,
-        owner: ContractAddress,
-    }
+    use contracts::constants::{TOKEN_TOTAL_RESERVE_LIMIT};
+    use contracts::{Errors};
 
     #[event]
     #[derive(Drop, starknet::Event)]
@@ -66,13 +55,21 @@ pub mod swap {
     }
 
     #[derive(Drop, starknet::Event)]
-    struct PoolUpdated {
+    pub struct PoolUpdated {
         #[key]
         pub token_in: ContractAddress,
         #[key]
         pub token_out: ContractAddress,
         new_balance_token_in: u256,
         new_balance_token_out: u256,
+    }
+
+    #[storage]
+    struct Storage {
+        poolBalance: Map<ContractAddress, u256>,
+        mtnToken: ContractAddress,
+        artToken: ContractAddress,
+        owner: ContractAddress,
     }
 
     #[constructor]
@@ -85,21 +82,6 @@ pub mod swap {
         self.poolBalance.entry(mtnToken).write(2000);
         self.poolBalance.entry(artToken).write(2000);
         self.owner.write(owner);
-    }
-
-    const TOKEN_TOTAL_RESERVE_LIMIT: u256 = 10000;
-
-    mod Errors {
-        const INVALID_TOKEN: felt252 = 'Invalid token address';
-        const INSUFFICIENT_BALANCE: felt252 = 'Insufficient balance';
-        const INSUFFICIENT_TOKEN: felt252 = 'Insufficient token';
-        const EXCEEDS_RESERVE_LIMIT: felt252 = 'Exceeds reserve limit';
-        const ZERO_ADDRESS: felt252 = 'Zero address not allowed';
-        const ZERO_AMOUNT: felt252 = 'Amount cannot be zero';
-        const SAME_TOKEN: felt252 = 'Cannot swap same token';
-        const TRANSFER_FAILED: felt252 = 'Token transfer failed';
-        const UNAUTHORIZED: felt252 = 'Unauthorized';
-        const LIMITED_ALLOWANCE: felt252 = 'pls increase allowance';
     }
 
     #[abi(embed_v0)]

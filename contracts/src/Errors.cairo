@@ -1,0 +1,10 @@
+pub const INVALID_TOKEN: felt252 = 'Invalid token address';
+pub const INSUFFICIENT_BALANCE: felt252 = 'Insufficient balance';
+pub const INSUFFICIENT_TOKEN: felt252 = 'Insufficient token';
+pub const EXCEEDS_RESERVE_LIMIT: felt252 = 'Exceeds reserve limit';
+pub const ZERO_ADDRESS: felt252 = 'Zero address not allowed';
+pub const ZERO_AMOUNT: felt252 = 'Amount cannot be zero';
+pub const SAME_TOKEN: felt252 = 'Cannot swap same token';
+pub const TRANSFER_FAILED: felt252 = 'Token transfer failed';
+pub const UNAUTHORIZED: felt252 = 'Unauthorized';
+pub const LIMITED_ALLOWANCE: felt252 = 'pls increase allowance';

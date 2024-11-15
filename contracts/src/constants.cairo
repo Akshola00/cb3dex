@@ -1,0 +1,1 @@
+pub const TOKEN_TOTAL_RESERVE_LIMIT: u256 = 10000;
