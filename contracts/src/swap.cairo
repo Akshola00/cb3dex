@@ -21,9 +21,10 @@ pub mod swap {
     };
     use starknet::ContractAddress;
     use starknet::storage::{
-        StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map, StorageMapReadAccess, StorageMapWriteAccess
+        StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map,
+        StorageMapReadAccess, StorageMapWriteAccess
     };
-    
+
 
     use starknet::{get_caller_address, get_contract_address};
 
@@ -61,7 +62,12 @@ pub mod swap {
     }
 
     #[constructor]
-    fn constructor(ref self: ContractState, mtnToken: ContractAddress, artToken: ContractAddress, owner: ContractAddress) {
+    fn constructor(
+        ref self: ContractState,
+        mtnToken: ContractAddress,
+        artToken: ContractAddress,
+        owner: ContractAddress
+    ) {
         self.poolBalance.entry(mtnToken).write(2000);
         self.poolBalance.entry(artToken).write(2000);
         self.owner.write(owner);
@@ -79,6 +85,7 @@ pub mod swap {
         const SAME_TOKEN: felt252 = 'Cannot swap same token';
         const TRANSFER_FAILED: felt252 = 'Token transfer failed';
         const UNAUTHORIZED: felt252 = 'Unauthorized';
+        const LIMITED_ALLOWANCE: felt252 = 'pls increase allowance';
     }
 
     #[abi(embed_v0)]
@@ -101,7 +108,13 @@ pub mod swap {
             assert(first_token != second_token, Errors::SAME_TOKEN);
             assert(amount > 0, Errors::ZERO_AMOUNT);
             assert(amount < TOKEN_TOTAL_RESERVE_LIMIT, Errors::EXCEEDS_RESERVE_LIMIT);
-
+            
+            let contract_first_token_allowance = first_token_instance
+                .allowance(caller, my_contract_address);
+            assert(
+                contract_first_token_allowance.try_into().unwrap() > amount,
+                Errors::LIMITED_ALLOWANCE
+            );
 
             let firsttokenpoolbal = self.poolBalance.entry(first_token).read();
             let secondtokenpoolbal = self.poolBalance.entry(second_token).read();
@@ -109,9 +122,12 @@ pub mod swap {
             let result_token = (secondtokenpoolbal * amount) / (firsttokenpoolbal + amount);
 
             // Check DEX Contract Token Balance for Swap Execution
-            let contract_second_token_balance = second_token_instance.balance_of(my_contract_address);
-            assert(contract_second_token_balance.try_into().unwrap() > result_token, Errors::INSUFFICIENT_TOKEN);
-
+            let contract_second_token_balance = second_token_instance
+                .balance_of(my_contract_address);
+            assert(
+                contract_second_token_balance.try_into().unwrap() > result_token,
+                Errors::INSUFFICIENT_TOKEN
+            );
 
             first_token_instance
                 .transfer_from(caller, my_contract_address, amount.try_into().unwrap());
