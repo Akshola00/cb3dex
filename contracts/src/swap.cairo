@@ -73,7 +73,7 @@ pub mod swap {
         self.owner.write(owner);
     }
 
-    const TOKEN_TOTAL_RESERVE_LIMIT: u256 = 2000;
+    const TOKEN_TOTAL_RESERVE_LIMIT: u256 = 10000;
 
     mod Errors {
         const INVALID_TOKEN: felt252 = 'Invalid token address';
@@ -98,9 +98,19 @@ pub mod swap {
         ) -> bool {
             let caller = get_caller_address();
             let my_contract_address = get_contract_address();
-
+            
+        
             let second_token_instance = IERC20Dispatcher { contract_address: second_token };
             let first_token_instance = IERC20Dispatcher { contract_address: first_token };
+
+            let contract_first_token_total_supply = first_token_instance
+                .get_total_supply();
+
+            let contract_second_token_total_supply = second_token_instance
+                .get_total_supply();
+
+            assert( contract_first_token_total_supply.try_into().unwrap() != 0, Errors::INVALID_TOKEN );
+            assert( contract_second_token_total_supply.try_into().unwrap() != 0, Errors::INVALID_TOKEN );
 
             //Validation
             assert(!self.is_zero_address(first_token), Errors::ZERO_ADDRESS);
@@ -111,6 +121,7 @@ pub mod swap {
             
             let contract_first_token_allowance = first_token_instance
                 .allowance(caller, my_contract_address);
+
             assert(
                 contract_first_token_allowance.try_into().unwrap() > amount,
                 Errors::LIMITED_ALLOWANCE
