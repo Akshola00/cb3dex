@@ -70,8 +70,8 @@ pub mod swap {
         #[key]
         pub token_in: ContractAddress,
         #[key]
-        pub token_out: ContractAddress,        
-        new_balance_token_in:  u256,
+        pub token_out: ContractAddress,
+        new_balance_token_in: u256,
         new_balance_token_out: u256,
     }
 
@@ -172,14 +172,13 @@ pub mod swap {
                     )
                 );
 
-            
             self
                 .emit(
                     Event::PoolUpdated(
                         PoolUpdated {
                             token_in: first_token,
                             token_out: second_token,
-                            new_balance_token_in:  self.poolBalance.read(first_token),
+                            new_balance_token_in: self.poolBalance.read(first_token),
                             new_balance_token_out: self.poolBalance.read(second_token),
                         }
                     )
