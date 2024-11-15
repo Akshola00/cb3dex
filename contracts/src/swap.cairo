@@ -36,14 +36,24 @@ pub mod swap {
         owner: ContractAddress,
     }
 
+    #[event]
     #[derive(Drop, starknet::Event)]
-    struct SwapSuccessful {
-        caller: ContractAddress,
-        token_in: ContractAddress,
-        token_out: ContractAddress,
-        amount_in: u256,
-        amount_out: u256,
-        timestamp: u256,
+    pub enum Event {
+        SwapSuccessful: SwapSuccessful,
+        SwapFailed: SwapFailed,
+        PoolUpdated: PoolUpdated,
+    }
+
+    #[derive(Drop, starknet::Event)]
+    pub struct SwapSuccessful {
+        #[key]
+        pub caller: ContractAddress,
+        #[key]
+        pub token_in: ContractAddress,
+        #[key]
+        pub token_out: ContractAddress,
+        pub amount_in: u256,
+        pub amount_out: u256,
     }
 
     #[derive(Drop, starknet::Event)]
@@ -57,8 +67,12 @@ pub mod swap {
 
     #[derive(Drop, starknet::Event)]
     struct PoolUpdated {
-        token: ContractAddress,
-        new_balance: u256,
+        #[key]
+        pub token_in: ContractAddress,
+        #[key]
+        pub token_out: ContractAddress,        
+        new_balance_token_in:  u256,
+        new_balance_token_out: u256,
     }
 
     #[constructor]
@@ -98,19 +112,20 @@ pub mod swap {
         ) -> bool {
             let caller = get_caller_address();
             let my_contract_address = get_contract_address();
-            
-        
+
             let second_token_instance = IERC20Dispatcher { contract_address: second_token };
             let first_token_instance = IERC20Dispatcher { contract_address: first_token };
 
-            let contract_first_token_total_supply = first_token_instance
-                .get_total_supply();
+            let contract_first_token_total_supply = first_token_instance.get_total_supply();
 
-            let contract_second_token_total_supply = second_token_instance
-                .get_total_supply();
+            let contract_second_token_total_supply = second_token_instance.get_total_supply();
 
-            assert( contract_first_token_total_supply.try_into().unwrap() != 0, Errors::INVALID_TOKEN );
-            assert( contract_second_token_total_supply.try_into().unwrap() != 0, Errors::INVALID_TOKEN );
+            assert(
+                contract_first_token_total_supply.try_into().unwrap() != 0, Errors::INVALID_TOKEN
+            );
+            assert(
+                contract_second_token_total_supply.try_into().unwrap() != 0, Errors::INVALID_TOKEN
+            );
 
             //Validation
             assert(!self.is_zero_address(first_token), Errors::ZERO_ADDRESS);
@@ -118,7 +133,7 @@ pub mod swap {
             assert(first_token != second_token, Errors::SAME_TOKEN);
             assert(amount > 0, Errors::ZERO_AMOUNT);
             assert(amount < TOKEN_TOTAL_RESERVE_LIMIT, Errors::EXCEEDS_RESERVE_LIMIT);
-            
+
             let contract_first_token_allowance = first_token_instance
                 .allowance(caller, my_contract_address);
 
@@ -144,6 +159,31 @@ pub mod swap {
                 .transfer_from(caller, my_contract_address, amount.try_into().unwrap());
             second_token_instance.transfer(caller, result_token.try_into().unwrap());
 
+            self
+                .emit(
+                    Event::SwapSuccessful(
+                        SwapSuccessful {
+                            caller,
+                            token_in: first_token,
+                            token_out: second_token,
+                            amount_in: amount,
+                            amount_out: result_token
+                        }
+                    )
+                );
+
+            
+            self
+                .emit(
+                    Event::PoolUpdated(
+                        PoolUpdated {
+                            token_in: first_token,
+                            token_out: second_token,
+                            new_balance_token_in:  self.poolBalance.read(first_token),
+                            new_balance_token_out: self.poolBalance.read(second_token),
+                        }
+                    )
+                );
             true
         }
 

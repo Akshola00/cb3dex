@@ -160,7 +160,6 @@ fn swap_successfully() {
     start_cheat_caller_address(deployed_mtn_contract_address, account1.try_into().unwrap());
     mtnToken_instance.increase_allowance(deployed_swap_contract_address, 100);
     stop_cheat_caller_address(deployed_mtn_contract_address);
-  
 
     // using the instance of the swap contract
     let get_mtnTokenBalance = swapContract_instance
