@@ -7,6 +7,7 @@ trait ISwap<T> {
         ref self: T, first_token: ContractAddress, second_token: ContractAddress, amount: u256
     ) -> bool;
     fn get_mtnTokenBalance(self: @T, mtnToken: ContractAddress) -> u256;
+    fn get_AmountResultToken(self: @T, amount: u256, first_token: ContractAddress, second_token: ContractAddress ) -> u256;
     fn get_artTokenBalance(self: @T, artToken: ContractAddress) -> u256;
 }
 
@@ -175,6 +176,17 @@ pub mod swap {
         fn get_artTokenBalance(self: @ContractState, artToken: ContractAddress) -> u256 {
             self.poolBalance.entry(artToken).read()
         }
+
+
+        fn get_AmountResultToken(self: @ContractState, amount: u256, first_token: ContractAddress, second_token: ContractAddress) -> u256 {
+            let firsttokenpoolbal = self.poolBalance.read(first_token);
+
+            let secondtokenpoolbal = self.poolBalance.read(second_token);
+
+            let result_token = (secondtokenpoolbal * amount) / (firsttokenpoolbal + amount);
+            result_token
+        }
+
     }
 
     #[generate_trait]

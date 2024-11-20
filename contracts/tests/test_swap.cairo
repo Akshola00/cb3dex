@@ -176,5 +176,7 @@ fn swap_successfully() {
     // calling the swap function with the users address (the user would like to swap 2mtn toknes to
     // art tokens)
     swapContract_instance.swap(deployed_mtn_contract_address, deployed_art_contract_address, 10);
+    let amountResultToken = swapContract_instance.get_AmountResultToken(10, deployed_mtn_contract_address, deployed_art_contract_address);
+    println!("{} im active", amountResultToken);
     stop_cheat_caller_address(deployed_swap_contract_address);
 }
