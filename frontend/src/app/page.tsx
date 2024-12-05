@@ -5,6 +5,7 @@ import { useAccount } from "@starknet-react/core";
 import swapImg from "../app/swapImg1.webp";
 import Image from "next/image";
 import TabButtonInterface from "./components/swap/tabButton";
+import Balance from "./components/balance";
 
 export default function Home() {
   const { isConnected, isDisconnected } = useAccount();
@@ -25,6 +26,7 @@ export default function Home() {
             <Image className="w-[35rem]" src={swapImg} alt="swap image" />
           </div>
         )}
+        <Balance />
       </section>
 
       <div className="w-full">{isConnected && <TabButtonInterface />}</div>
